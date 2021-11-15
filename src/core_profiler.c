@@ -53,6 +53,31 @@ static FILE *outf;
 static lprofS_STACK_RECORD *info;
 static float function_call_time;
 
+/* create empty array, default capcacity is 100 */
+DynamicArray create_array(){
+    DynamicArray dy;
+    dy.size = 0;
+    dy.capacity = 100;
+    dy.array = (char**)malloc(dy.capacity*sizeof(char*));
+    return dy;
+};
+
+/* create deep copy of source string */
+void push_array(DynamicArray* p_array,const char* p_string){
+    int length = strlen(p_string);
+    char *new_string = (char *)malloc(sizeof(char)*(length+1));
+    strcpy(new_string,p_string);
+    p_array->array[(p_array->size)++] = new_string;
+};
+
+/* free all pointers*/
+void clear_array(DynamicArray* p_array){
+    int cur_index;
+    for(cur_index=0;cur_index<p_array->size;cur_index++)
+        free(p_array->array[cur_index]);
+    free(p_array->array);
+    p_array->size = 0;
+};
 
 /* output a line to the log file, using 'printf()' syntax */
 /* assume the timer is off */
@@ -121,6 +146,8 @@ int lprofP_callhookOUT(lprofP_STATE* S) {
      name[MAX_FUNCTION_NAME_LENGTH+1] = '\0';
   }
   formats(name);
+  /* only storage method names*/
+  push_array(&storage_array,name);
   output("%d\t%s\t%s\t%d\t%d\t%f\t%f\n", S->stack_level, source, name, 
 	 info->line_defined, info->current_line,
 	 info->local_time, info->total_time);

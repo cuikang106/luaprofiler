@@ -14,6 +14,7 @@ lua50_profiler.c:
 #include <string.h>
 
 #include "clocks.h"
+#define MAIN_FILE
 #include "core_profiler.h"
 #include "function_meter.h"
 
@@ -118,6 +119,8 @@ static int profiler_init(lua_State *L) {
   const char* outfile;
   float function_call_time;
 
+  storage_array = create_array();
+
   lua_pushlightuserdata(L, &profstate_id);
   lua_gettable(L, LUA_REGISTRYINDEX);
   if(!lua_isnil(L, -1)) {
@@ -185,7 +188,18 @@ static int profiler_stop(lua_State *L) {
     lua_settable(L, LUA_REGISTRYINDEX);
     lua_pushboolean(L, 1);
   } else { lua_pushboolean(L, 0); }
-  return 1;
+
+  /* add custom array of method name*/
+  lua_newtable(L);
+  int cur_index;
+  for(cur_index=0;cur_index<storage_array.size;cur_index++){
+    lua_pushnumber(L,cur_index+1);
+    lua_pushstring(L,storage_array.array[cur_index]);
+    lua_settable(L,-3);
+  }
+  clear_array(&storage_array);
+  return 2;
+  /* return 1; */
 }
 
 /* calculates the approximate time Lua takes to call a function */

@@ -18,6 +18,28 @@ Design (using the Lua callhook mechanism) :
 
 #include "stack.h"
 
+typedef struct DynamicArray DynamicArray;
+
+struct DynamicArray
+{
+    char ** array;
+    int size;
+    int capacity;
+};
+
+#ifdef MAIN_FILE
+DynamicArray storage_array;
+#else
+extern DynamicArray storage_array;
+#endif
+
+DynamicArray create_array();
+
+void push_array(DynamicArray* p_array,const char* p_string);
+
+void clear_array(DynamicArray* p_array);
+
+
 /* computes new stack and new timer */
 void lprofP_callhookIN(lprofP_STATE* S, char *func_name, char *file, int linedefined, int currentline);
 
