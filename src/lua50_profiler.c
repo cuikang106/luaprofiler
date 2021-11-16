@@ -194,7 +194,7 @@ static int profiler_stop(lua_State *L) {
   int cur_index;
   for(cur_index=0;cur_index<storage_array.size;cur_index++){
     lua_pushnumber(L,cur_index+1);
-    lua_pushstring(L,storage_array.array[cur_index]);
+    lua_pushstring(L,storage_array.mem[cur_index]);
     lua_settable(L,-3);
   }
   clear_array(&storage_array);

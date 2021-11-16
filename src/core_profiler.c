@@ -53,29 +53,38 @@ static FILE *outf;
 static lprofS_STACK_RECORD *info;
 static float function_call_time;
 
-/* create empty array, default capcacity is 100 */
+/* create empty array, default capcacity is 64 */
 DynamicArray create_array(){
     DynamicArray dy;
     dy.size = 0;
-    dy.capacity = 100;
-    dy.array = (char**)malloc(dy.capacity*sizeof(char*));
+    dy.capacity = 64;
+    dy.mem = (char**)malloc(dy.capacity*sizeof(char*));
     return dy;
 };
 
-/* create deep copy of source string */
+/* save string independently */
 void push_array(DynamicArray* p_array,const char* p_string){
+    /* create a deepcopy of target string */
     int length = strlen(p_string);
     char *new_string = (char *)malloc(sizeof(char)*(length+1));
     strcpy(new_string,p_string);
-    p_array->array[(p_array->size)++] = new_string;
+    /* auto expansion */
+    if (p_array->size == p_array->capacity){
+        p_array->capacity *= 2;
+        char ** tmp = (char**)malloc(p_array->capacity*sizeof(char*));
+        memcpy(tmp,p_array->mem,p_array->size*(sizeof(char*)));
+        free(p_array->mem);
+        p_array->mem = tmp;
+    }
+    p_array->mem[(p_array->size)++] = new_string;
 };
 
 /* free all pointers*/
 void clear_array(DynamicArray* p_array){
     int cur_index;
     for(cur_index=0;cur_index<p_array->size;cur_index++)
-        free(p_array->array[cur_index]);
-    free(p_array->array);
+        free(p_array->mem[cur_index]);
+    free(p_array->mem);
     p_array->size = 0;
 };
 

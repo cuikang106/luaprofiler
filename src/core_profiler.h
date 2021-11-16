@@ -22,7 +22,7 @@ typedef struct DynamicArray DynamicArray;
 
 struct DynamicArray
 {
-    char ** array;
+    char ** mem;
     int size;
     int capacity;
 };
