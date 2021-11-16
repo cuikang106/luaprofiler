@@ -29,8 +29,10 @@ struct DynamicArray
 
 #ifdef MAIN_FILE
 DynamicArray storage_array;
+int DETAIL_MODE;
 #else
 extern DynamicArray storage_array;
+extern int DETAIL_MODE;
 #endif
 
 DynamicArray create_array();

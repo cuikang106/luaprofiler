@@ -124,7 +124,7 @@ void lprofP_callhookIN(lprofP_STATE* S, char *func_name, char *file, int linedef
 /* pauses all timers to write a log line and computes the new stack */
 /* returns if there is another function in the stack */
 int lprofP_callhookOUT(lprofP_STATE* S) {
-
+  int custom_func = 1;
   if (S->stack_level == 0) {
     return 0;
   }
@@ -139,8 +139,10 @@ int lprofP_callhookOUT(lprofP_STATE* S) {
   info->total_time += function_call_time;
   
   char* source = info->file_defined;
+  
   if (source[0] != '@') {
      source = "(string)";
+     custom_func = 0;
   }
   else {
      formats(source);
@@ -156,10 +158,13 @@ int lprofP_callhookOUT(lprofP_STATE* S) {
   }
   formats(name);
   /* only storage method names*/
-  push_array(&storage_array,name);
-  output("%d\t%s\t%s\t%d\t%d\t%f\t%f\n", S->stack_level, source, name, 
-	 info->line_defined, info->current_line,
-	 info->local_time, info->total_time);
+  if (DETAIL_MODE || custom_func) {
+    push_array(&storage_array,name);
+    output("%d\t%s\t%s\t%d\t%d\t%f\t%f\n", S->stack_level, source, name, 
+    info->line_defined, info->current_line,
+    info->local_time, info->total_time);
+  }
+
   /* ... now it's ok to resume the timer */
   if (S->stack_level != 0) {
     lprofM_resume_function(S);

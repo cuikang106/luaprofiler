@@ -120,7 +120,8 @@ static int profiler_init(lua_State *L) {
   float function_call_time;
 
   storage_array = create_array();
-
+  DETAIL_MODE = lua_tonumber(L,-1);
+  
   lua_pushlightuserdata(L, &profstate_id);
   lua_gettable(L, LUA_REGISTRYINDEX);
   if(!lua_isnil(L, -1)) {
