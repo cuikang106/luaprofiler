@@ -116,6 +116,9 @@ static void formats(char *s) {
 
 /* computes new stack and new timer */
 void lprofP_callhookIN(lprofP_STATE* S, char *func_name, char *file, int linedefined, int currentline) {	
+  if(!S){
+    return;
+  }
   S->stack_level++;
   lprofM_enter_function(S, file, func_name, linedefined, currentline);
 }
@@ -125,6 +128,9 @@ void lprofP_callhookIN(lprofP_STATE* S, char *func_name, char *file, int linedef
 /* returns if there is another function in the stack */
 int lprofP_callhookOUT(lprofP_STATE* S) {
   int custom_func = 1;
+  if (!S){
+    return 0;
+  }
   if (S->stack_level == 0) {
     return 0;
   }
